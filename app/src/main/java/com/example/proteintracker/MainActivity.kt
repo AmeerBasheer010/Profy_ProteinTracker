@@ -28,7 +28,8 @@ data class FoodItem(val name: String, val proteinPerPiece: Int, val unit: String
 data class AddedFood(val name: String, val proteinPerPiece: Int, val unit: String, val quantity: Int)
 
 val indianFoodDatabase = listOf(
-    // Kerala / South Indian
+
+    // ─── Kerala / South Indian ───────────────────────────────
     FoodItem("Appam", 1, "piece"),
     FoodItem("Idli", 2, "piece"),
     FoodItem("Idiyappam", 1, "piece"),
@@ -39,16 +40,15 @@ val indianFoodDatabase = listOf(
     FoodItem("Unniyappam", 1, "piece"),
     FoodItem("Pazham Pori", 1, "piece"),
     FoodItem("Kappa (Tapioca)", 2, "cup"),
-    FoodItem("Banana", 1, "piece"),
-
-    // Breads
-    FoodItem("Chapati / Roti", 3, "piece"),
     FoodItem("Porotta", 3, "piece"),
+
+    // ─── Breads ──────────────────────────────────────────────
+    FoodItem("Chapati / Roti", 3, "piece"),
     FoodItem("Bread (White)", 2, "slice"),
     FoodItem("Bread (Brown)", 3, "slice"),
     FoodItem("Bread Bun", 4, "piece"),
 
-    // Rice
+    // ─── Rice & Biriyani ─────────────────────────────────────
     FoodItem("Rice", 4, "cup"),
     FoodItem("Fried Rice", 6, "cup"),
     FoodItem("Chicken Biriyani", 28, "plate"),
@@ -56,50 +56,53 @@ val indianFoodDatabase = listOf(
     FoodItem("Mandi (Chicken)", 30, "plate"),
     FoodItem("Mandi (Mutton)", 28, "plate"),
 
-    // Eggs
+    // ─── Eggs ────────────────────────────────────────────────
     FoodItem("Egg", 6, "piece"),
     FoodItem("Omelette", 12, "piece"),
-    FoodItem("Egg Curry", 6, "egg"),
+    FoodItem("Egg Curry", 6, "piece"),
+    FoodItem("Boiled Egg", 6, "piece"),
+    FoodItem("Fried Egg", 6, "piece"),
 
-    // Chicken
+    // ─── Chicken ─────────────────────────────────────────────
     FoodItem("Chicken Curry", 25, "100g"),
     FoodItem("Chicken Fry", 28, "100g"),
     FoodItem("Butter Chicken", 22, "cup"),
     FoodItem("Kadai Chicken", 24, "cup"),
+    FoodItem("Chicken Shawarma", 20, "piece"),
 
-    // Beef & Mutton
+    // ─── Beef & Mutton ───────────────────────────────────────
     FoodItem("Beef Curry", 22, "100g"),
     FoodItem("Beef Fry", 25, "100g"),
     FoodItem("Mutton Curry", 20, "100g"),
 
-    // Fish & Seafood
+    // ─── Fish & Seafood ──────────────────────────────────────
     FoodItem("Fish Curry", 20, "100g"),
     FoodItem("Fish Fry", 22, "100g"),
     FoodItem("Prawn Curry", 18, "100g"),
 
-    // Dal & Curry
+    // ─── Dal & Curries ───────────────────────────────────────
     FoodItem("Dal", 9, "cup"),
     FoodItem("Sambar", 5, "cup"),
     FoodItem("Rasam", 2, "cup"),
     FoodItem("Chana Masala", 12, "cup"),
     FoodItem("Palak Paneer", 10, "cup"),
     FoodItem("Mixed Veg Curry", 4, "cup"),
+    FoodItem("Rajma", 15, "cup"),
 
-    // Dairy
-    FoodItem("Milk", 8, "glass"),
-    FoodItem("Curd / Yogurt", 4, "100g"),
+    // ─── Dairy ───────────────────────────────────────────────
     FoodItem("Paneer", 18, "100g"),
+    FoodItem("Curd / Yogurt", 4, "100g"),
     FoodItem("Butter", 0, "tbsp"),
+    FoodItem("Cheese Slice", 4, "piece"),
+    FoodItem("Ghee", 0, "tbsp"),
 
-    // Snacks & Street Food
-    FoodItem("Shawarma", 20, "piece"),
+    // ─── Snacks & Street Food ────────────────────────────────
     FoodItem("Samosa", 4, "piece"),
     FoodItem("Vada", 3, "piece"),
     FoodItem("Pani Puri", 1, "piece"),
-    FoodItem("Peanuts", 7, "handful"),
-    FoodItem("Soya Chunks", 52, "100g"),
+    FoodItem("Vada Pav", 5, "piece"),
 
-    // Bakery
+    // ─── Bakery ──────────────────────────────────────────────
     FoodItem("Egg Puff", 8, "piece"),
     FoodItem("Chicken Puff", 10, "piece"),
     FoodItem("Veg Puff", 4, "piece"),
@@ -107,12 +110,131 @@ val indianFoodDatabase = listOf(
     FoodItem("Biscuits", 2, "piece"),
     FoodItem("Banana Bread", 3, "slice"),
 
-    // Sweets
+    // ─── Sweets ──────────────────────────────────────────────
     FoodItem("Jalebi", 1, "piece"),
     FoodItem("Laddu", 3, "piece"),
     FoodItem("Halwa", 2, "serving"),
-    FoodItem("Kheer", 5, "cup")
+    FoodItem("Kheer", 5, "cup"),
+    FoodItem("Gulab Jamun", 2, "piece"),
+    FoodItem("Rasgulla", 2, "piece"),
+
+    // ─── Fruits ──────────────────────────────────────────────
+    FoodItem("Banana", 1, "piece"),
+    FoodItem("Apple", 1, "piece"),
+    FoodItem("Mango", 2, "cup"),
+    FoodItem("Watermelon", 1, "cup"),
+    FoodItem("Grapes", 1, "cup"),
+    FoodItem("Orange", 1, "piece"),
+    FoodItem("Papaya", 1, "cup"),
+    FoodItem("Pineapple", 1, "cup"),
+    FoodItem("Pomegranate", 2, "cup"),
+    FoodItem("Guava", 2, "piece"),
+    FoodItem("Pear", 1, "piece"),
+    FoodItem("Strawberry", 1, "cup"),
+    FoodItem("Kiwi", 1, "piece"),
+    FoodItem("Coconut", 2, "piece"),
+    FoodItem("Jackfruit", 2, "cup"),
+    FoodItem("Sapota (Chikoo)", 1, "piece"),
+    FoodItem("Lychee", 1, "cup"),
+    FoodItem("Fig", 1, "piece"),
+    FoodItem("Dates", 2, "piece"),
+
+    // ─── Vegetables ──────────────────────────────────────────
+    FoodItem("Spinach", 3, "cup"),
+    FoodItem("Carrot", 1, "piece"),
+    FoodItem("Beetroot", 2, "piece"),
+    FoodItem("Potato", 2, "piece"),
+    FoodItem("Broccoli", 4, "cup"),
+    FoodItem("Green Peas", 5, "cup"),
+    FoodItem("Cucumber", 1, "piece"),
+    FoodItem("Tomato", 1, "piece"),
+    FoodItem("Onion", 1, "piece"),
+    FoodItem("Cabbage", 2, "cup"),
+    FoodItem("Cauliflower", 3, "cup"),
+    FoodItem("Beans", 2, "cup"),
+    FoodItem("Drumstick (Moringa)", 2, "piece"),
+    FoodItem("Bitter Gourd", 1, "piece"),
+    FoodItem("Bottle Gourd", 1, "cup"),
+    FoodItem("Pumpkin", 1, "cup"),
+    FoodItem("Corn", 3, "piece"),
+    FoodItem("Mushroom", 3, "cup"),
+    FoodItem("Sweet Potato", 2, "piece"),
+    FoodItem("Ash Gourd", 1, "cup"),
+    FoodItem("Raw Banana", 2, "piece"),
+    FoodItem("Yam", 2, "cup"),
+
+    // ─── Milk ────────────────────────────────────────────────
+    FoodItem("Milk", 8, "glass"),
+    FoodItem("Chocolate Milk", 8, "glass"),
+    FoodItem("Soy Milk", 7, "glass"),
+    FoodItem("Almond Milk", 2, "glass"),
+
+    // ─── Hot Drinks ───────────────────────────────────────────
+    FoodItem("Hot Coffee with Milk", 3, "cup"),
+    FoodItem("Black Coffee", 0, "cup"),
+    FoodItem("Hot Tea with Milk", 2, "cup"),
+    FoodItem("Black Tea", 0, "cup"),
+    FoodItem("Latte", 5, "cup"),
+    FoodItem("Cappuccino", 4, "cup"),
+    FoodItem("Green Tea", 0, "cup"),
+    FoodItem("Masala Chai", 3, "cup"),
+
+    // ─── Shakes ──────────────────────────────────────────────
+    FoodItem("Sharjah Shake", 6, "glass"),
+    FoodItem("Pista Shake", 8, "glass"),
+    FoodItem("Badam Shake", 7, "glass"),
+    FoodItem("Banana Shake", 7, "glass"),
+    FoodItem("Mango Shake", 5, "glass"),
+    FoodItem("Chocolate Shake", 8, "glass"),
+    FoodItem("Strawberry Shake", 5, "glass"),
+    FoodItem("Cold Coffee", 5, "glass"),
+    FoodItem("Vanilla Shake", 6, "glass"),
+    FoodItem("Mixed Fruit Shake", 4, "glass"),
+    FoodItem("Papaya Shake", 4, "glass"),
+    FoodItem("Chikoo Shake", 4, "glass"),
+    FoodItem("Avocado Shake", 5, "glass"),
+    FoodItem("Dates Shake", 5, "glass"),
+    FoodItem("Rose Milk", 4, "glass"),
+    FoodItem("Lassi", 6, "glass"),
+    FoodItem("Sweet Lassi", 5, "glass"),
+    FoodItem("Mango Lassi", 5, "glass"),
+    FoodItem("Buttermilk", 3, "glass"),
+    FoodItem("Coconut Water", 2, "glass"),
+    FoodItem("Protein Shake", 25, "glass"),
+
+    // ─── Nuts & Seeds ────────────────────────────────────────
+    FoodItem("Peanuts", 7, "handful"),
+    FoodItem("Almonds", 6, "handful"),
+    FoodItem("Cashews", 5, "handful"),
+    FoodItem("Pistachios", 6, "handful"),
+    FoodItem("Walnuts", 4, "handful"),
+    FoodItem("Raisins", 1, "handful"),
+    FoodItem("Chia Seeds", 3, "tbsp"),
+    FoodItem("Flax Seeds", 2, "tbsp"),
+    FoodItem("Sunflower Seeds", 3, "tbsp"),
+    FoodItem("Pumpkin Seeds", 4, "tbsp"),
+    FoodItem("Hemp Seeds", 5, "tbsp"),
+    FoodItem("Sesame Seeds", 2, "tbsp"),
+    FoodItem("Fox Nuts (Makhana)", 3, "handful"),
+    FoodItem("Mixed Nuts", 5, "handful"),
+
+    // ─── Supplements ─────────────────────────────────────────
+    FoodItem("Whey Protein", 25, "scoop"),
+    FoodItem("Whey Isolate", 27, "scoop"),
+    FoodItem("Casein Protein", 24, "scoop"),
+    FoodItem("Plant Protein", 20, "scoop"),
+    FoodItem("Mass Gainer", 30, "scoop"),
+    FoodItem("Protein Bar", 20, "piece"),
+    FoodItem("Peanut Butter", 4, "tbsp"),
+    FoodItem("BCAA", 0, "scoop"),
+    FoodItem("Creatine", 0, "scoop"),
+    FoodItem("Pre-Workout", 0, "scoop"),
+    FoodItem("Multivitamin", 0, "piece"),
+    FoodItem("Fish Oil", 0, "piece"),
+    FoodItem("Vitamin D", 0, "piece"),
+    FoodItem("Zinc", 0, "piece")
 )
+
 
 // ─── Main ──────────────────────────────────────────────────────────────────
 
