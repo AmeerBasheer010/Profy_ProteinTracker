@@ -21,14 +21,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 // ─── Data ─────────────────────────────────────────────────────────────────
 
 data class FoodItem(val name: String, val proteinPerPiece: Int, val unit: String)
-data class AddedFood(val name: String, val proteinPerPiece: Int, val unit: String, val quantity: Int)
 
 val indianFoodDatabase = listOf(
-
     // ─── Kerala / South Indian ───────────────────────────────
     FoodItem("Appam", 1, "piece"),
     FoodItem("Idli", 2, "piece"),
@@ -41,13 +41,11 @@ val indianFoodDatabase = listOf(
     FoodItem("Pazham Pori", 1, "piece"),
     FoodItem("Kappa (Tapioca)", 2, "cup"),
     FoodItem("Porotta", 3, "piece"),
-
     // ─── Breads ──────────────────────────────────────────────
     FoodItem("Chapati / Roti", 3, "piece"),
     FoodItem("Bread (White)", 2, "slice"),
     FoodItem("Bread (Brown)", 3, "slice"),
     FoodItem("Bread Bun", 4, "piece"),
-
     // ─── Rice & Biriyani ─────────────────────────────────────
     FoodItem("Rice", 4, "cup"),
     FoodItem("Fried Rice", 6, "cup"),
@@ -55,31 +53,26 @@ val indianFoodDatabase = listOf(
     FoodItem("Mutton Biriyani", 25, "plate"),
     FoodItem("Mandi (Chicken)", 30, "plate"),
     FoodItem("Mandi (Mutton)", 28, "plate"),
-
     // ─── Eggs ────────────────────────────────────────────────
     FoodItem("Egg", 6, "piece"),
     FoodItem("Omelette", 12, "piece"),
     FoodItem("Egg Curry", 6, "piece"),
     FoodItem("Boiled Egg", 6, "piece"),
     FoodItem("Fried Egg", 6, "piece"),
-
     // ─── Chicken ─────────────────────────────────────────────
     FoodItem("Chicken Curry", 25, "100g"),
     FoodItem("Chicken Fry", 28, "100g"),
     FoodItem("Butter Chicken", 22, "cup"),
     FoodItem("Kadai Chicken", 24, "cup"),
     FoodItem("Chicken Shawarma", 20, "piece"),
-
     // ─── Beef & Mutton ───────────────────────────────────────
     FoodItem("Beef Curry", 22, "100g"),
     FoodItem("Beef Fry", 25, "100g"),
     FoodItem("Mutton Curry", 20, "100g"),
-
     // ─── Fish & Seafood ──────────────────────────────────────
     FoodItem("Fish Curry", 20, "100g"),
     FoodItem("Fish Fry", 22, "100g"),
     FoodItem("Prawn Curry", 18, "100g"),
-
     // ─── Dal & Curries ───────────────────────────────────────
     FoodItem("Dal", 9, "cup"),
     FoodItem("Sambar", 5, "cup"),
@@ -88,20 +81,17 @@ val indianFoodDatabase = listOf(
     FoodItem("Palak Paneer", 10, "cup"),
     FoodItem("Mixed Veg Curry", 4, "cup"),
     FoodItem("Rajma", 15, "cup"),
-
     // ─── Dairy ───────────────────────────────────────────────
     FoodItem("Paneer", 18, "100g"),
     FoodItem("Curd / Yogurt", 4, "100g"),
     FoodItem("Butter", 0, "tbsp"),
     FoodItem("Cheese Slice", 4, "piece"),
     FoodItem("Ghee", 0, "tbsp"),
-
     // ─── Snacks & Street Food ────────────────────────────────
     FoodItem("Samosa", 4, "piece"),
     FoodItem("Vada", 3, "piece"),
     FoodItem("Pani Puri", 1, "piece"),
     FoodItem("Vada Pav", 5, "piece"),
-
     // ─── Bakery ──────────────────────────────────────────────
     FoodItem("Egg Puff", 8, "piece"),
     FoodItem("Chicken Puff", 10, "piece"),
@@ -109,7 +99,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Cake Slice", 4, "slice"),
     FoodItem("Biscuits", 2, "piece"),
     FoodItem("Banana Bread", 3, "slice"),
-
     // ─── Sweets ──────────────────────────────────────────────
     FoodItem("Jalebi", 1, "piece"),
     FoodItem("Laddu", 3, "piece"),
@@ -117,7 +106,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Kheer", 5, "cup"),
     FoodItem("Gulab Jamun", 2, "piece"),
     FoodItem("Rasgulla", 2, "piece"),
-
     // ─── Fruits ──────────────────────────────────────────────
     FoodItem("Banana", 1, "piece"),
     FoodItem("Apple", 1, "piece"),
@@ -138,7 +126,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Lychee", 1, "cup"),
     FoodItem("Fig", 1, "piece"),
     FoodItem("Dates", 2, "piece"),
-
     // ─── Vegetables ──────────────────────────────────────────
     FoodItem("Spinach", 3, "cup"),
     FoodItem("Carrot", 1, "piece"),
@@ -162,14 +149,12 @@ val indianFoodDatabase = listOf(
     FoodItem("Ash Gourd", 1, "cup"),
     FoodItem("Raw Banana", 2, "piece"),
     FoodItem("Yam", 2, "cup"),
-
     // ─── Milk ────────────────────────────────────────────────
     FoodItem("Milk", 8, "glass"),
     FoodItem("Chocolate Milk", 8, "glass"),
     FoodItem("Soy Milk", 7, "glass"),
     FoodItem("Almond Milk", 2, "glass"),
-
-    // ─── Hot Drinks ───────────────────────────────────────────
+    // ─── Hot Drinks ──────────────────────────────────────────
     FoodItem("Hot Coffee with Milk", 3, "cup"),
     FoodItem("Black Coffee", 0, "cup"),
     FoodItem("Hot Tea with Milk", 2, "cup"),
@@ -178,7 +163,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Cappuccino", 4, "cup"),
     FoodItem("Green Tea", 0, "cup"),
     FoodItem("Masala Chai", 3, "cup"),
-
     // ─── Shakes ──────────────────────────────────────────────
     FoodItem("Sharjah Shake", 6, "glass"),
     FoodItem("Pista Shake", 8, "glass"),
@@ -201,7 +185,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Buttermilk", 3, "glass"),
     FoodItem("Coconut Water", 2, "glass"),
     FoodItem("Protein Shake", 25, "glass"),
-
     // ─── Nuts & Seeds ────────────────────────────────────────
     FoodItem("Peanuts", 7, "handful"),
     FoodItem("Almonds", 6, "handful"),
@@ -217,7 +200,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Sesame Seeds", 2, "tbsp"),
     FoodItem("Fox Nuts (Makhana)", 3, "handful"),
     FoodItem("Mixed Nuts", 5, "handful"),
-
     // ─── Supplements ─────────────────────────────────────────
     FoodItem("Whey Protein", 25, "scoop"),
     FoodItem("Whey Isolate", 27, "scoop"),
@@ -235,33 +217,53 @@ val indianFoodDatabase = listOf(
     FoodItem("Zinc", 0, "piece")
 )
 
-
 // ─── Main ──────────────────────────────────────────────────────────────────
 
 class MainActivity : ComponentActivity() {
+    private lateinit var database: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { ProfyApp() }
+        database = AppDatabase.getDatabase(this)
+        setContent { ProfyApp(database) }
     }
 }
 
 // ─── App Navigator ─────────────────────────────────────────────────────────
 
 @Composable
-fun ProfyApp() {
-    val addedFoods = remember { mutableStateListOf<AddedFood>() }
+fun ProfyApp(database: AppDatabase) {
     var showAddFoodScreen by remember { mutableStateOf(false) }
+    val today = LocalDate.now().toString()
+    val dao = database.foodDao()
+    val foodEntries by dao.getFoodsByDate(today).collectAsState(initial = emptyList())
+    val scope = rememberCoroutineScope()
 
     if (showAddFoodScreen) {
         AddFoodScreen(
             onBack = { showAddFoodScreen = false },
-            onFoodAdded = { food -> addedFoods.add(food) }
+            onFoodAdded = { name, protein, unit, quantity ->
+                scope.launch {
+                    dao.insertFood(
+                        FoodEntry(
+                            name = name,
+                            proteinPerPiece = protein,
+                            unit = unit,
+                            quantity = quantity,
+                            date = today
+                        )
+                    )
+                }
+                showAddFoodScreen = false
+            }
         )
     } else {
         HomeScreen(
-            addedFoods = addedFoods,
+            foodEntries = foodEntries,
             onAddFoodClick = { showAddFoodScreen = true },
-            onDeleteFood = { food -> addedFoods.remove(food) }
+            onDeleteFood = { food ->
+                scope.launch { dao.deleteFood(food) }
+            }
         )
     }
 }
@@ -270,15 +272,15 @@ fun ProfyApp() {
 
 @Composable
 fun HomeScreen(
-    addedFoods: List<AddedFood>,
+    foodEntries: List<FoodEntry>,
     onAddFoodClick: () -> Unit,
-    onDeleteFood: (AddedFood) -> Unit
+    onDeleteFood: (FoodEntry) -> Unit
 ) {
     val userName = "Ameer"
     val dailyGoal = 120
-    val consumed = addedFoods.sumOf { it.proteinPerPiece * it.quantity }
+    val consumed = foodEntries.sumOf { it.proteinPerPiece * it.quantity }
     val remaining = dailyGoal - consumed
-    var foodToDelete by remember { mutableStateOf<AddedFood?>(null) }
+    var foodToDelete by remember { mutableStateOf<FoodEntry?>(null) }
 
     if (foodToDelete != null) {
         AlertDialog(
@@ -313,18 +315,14 @@ fun HomeScreen(
             fontWeight = FontWeight.ExtraBold,
             color = Color(0xFF2D6A4F)
         )
-
         Spacer(modifier = Modifier.height(4.dp))
-
         Text(
             text = "Hey $userName, How's it going? 👋",
             fontSize = 16.sp,
             color = Color(0xFF555555)
         )
-
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Progress Card
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -344,9 +342,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 LinearProgressIndicator(
                     progress = { (consumed.toFloat() / dailyGoal).coerceIn(0f, 1f) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp),
+                    modifier = Modifier.fillMaxWidth().height(8.dp),
                     color = Color(0xFF95D5B2),
                     trackColor = Color(0xFF1B4332)
                 )
@@ -354,21 +350,17 @@ fun HomeScreen(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-
         Text(
             text = "What did you eat today? 🍽️",
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF1a1a2e)
         )
-
         Spacer(modifier = Modifier.height(12.dp))
 
-        if (addedFoods.isEmpty()) {
+        if (foodEntries.isEmpty()) {
             Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
+                modifier = Modifier.weight(1f).fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -382,16 +374,14 @@ fun HomeScreen(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(addedFoods) { food ->
+                items(foodEntries) { food ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -431,12 +421,9 @@ fun HomeScreen(
         }
 
         Spacer(modifier = Modifier.height(12.dp))
-
         Button(
             onClick = onAddFoodClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp),
+            modifier = Modifier.fillMaxWidth().height(52.dp),
             shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D6A4F))
         ) {
@@ -461,7 +448,7 @@ fun ProgressStat(value: String, label: String) {
 @Composable
 fun AddFoodScreen(
     onBack: () -> Unit,
-    onFoodAdded: (AddedFood) -> Unit
+    onFoodAdded: (String, Int, String, Int) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedFood by remember { mutableStateOf<FoodItem?>(null) }
@@ -476,7 +463,6 @@ fun AddFoodScreen(
             .fillMaxSize()
             .background(Color(0xFFF8F8F8))
     ) {
-        // Top bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -500,15 +486,11 @@ fun AddFoodScreen(
         }
 
         Column(modifier = Modifier.padding(16.dp)) {
-
-            // Search bar
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 placeholder = { Text("Search foods...") },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null)
-                },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true
@@ -516,7 +498,6 @@ fun AddFoodScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Selected food quantity card
             if (selectedFood != null) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -535,18 +516,13 @@ fun AddFoodScreen(
                             color = Color(0xFFB7E4C7),
                             fontSize = 12.sp
                         )
-
                         Spacer(modifier = Modifier.height(12.dp))
-
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                "How many ${selectedFood!!.unit}s?",
-                                color = Color.White
-                            )
+                            Text("How many ${selectedFood!!.unit}s?", color = Color.White)
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Button(
                                     onClick = { if (quantity > 1) quantity-- },
@@ -555,7 +531,6 @@ fun AddFoodScreen(
                                     ),
                                     contentPadding = PaddingValues(horizontal = 12.dp)
                                 ) { Text("-") }
-
                                 Text(
                                     "$quantity",
                                     color = Color.White,
@@ -563,7 +538,6 @@ fun AddFoodScreen(
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 )
-
                                 Button(
                                     onClick = { quantity++ },
                                     colors = ButtonDefaults.buttonColors(
@@ -573,31 +547,22 @@ fun AddFoodScreen(
                                 ) { Text("+") }
                             }
                         }
-
                         Spacer(modifier = Modifier.height(8.dp))
-
                         Text(
                             "Total Protein: ${selectedFood!!.proteinPerPiece * quantity}g",
                             color = Color(0xFF95D5B2),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
                         )
-
                         Spacer(modifier = Modifier.height(12.dp))
-
                         Button(
                             onClick = {
                                 onFoodAdded(
-                                    AddedFood(
-                                        name = selectedFood!!.name,
-                                        proteinPerPiece = selectedFood!!.proteinPerPiece,
-                                        unit = selectedFood!!.unit,
-                                        quantity = quantity
-                                    )
+                                    selectedFood!!.name,
+                                    selectedFood!!.proteinPerPiece,
+                                    selectedFood!!.unit,
+                                    quantity
                                 )
-                                selectedFood = null
-                                quantity = 1
-                                onBack()
                             },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
@@ -615,7 +580,6 @@ fun AddFoodScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // Food list
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(filteredFoods) { food ->
                     Card(
@@ -632,23 +596,13 @@ fun AddFoodScreen(
                         )
                     ) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column {
-                                Text(
-                                    food.name,
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 15.sp
-                                )
-                                Text(
-                                    "per ${food.unit}",
-                                    fontSize = 12.sp,
-                                    color = Color(0xFFAAAAAA)
-                                )
+                                Text(food.name, fontWeight = FontWeight.Medium, fontSize = 15.sp)
+                                Text("per ${food.unit}", fontSize = 12.sp, color = Color(0xFFAAAAAA))
                             }
                             Text(
                                 "${food.proteinPerPiece}g",
