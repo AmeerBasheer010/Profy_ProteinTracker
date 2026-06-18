@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -29,7 +31,6 @@ import java.time.LocalDate
 data class FoodItem(val name: String, val proteinPerPiece: Int, val unit: String)
 
 val indianFoodDatabase = listOf(
-    // ─── Kerala / South Indian ───────────────────────────────
     FoodItem("Appam", 1, "piece"),
     FoodItem("Idli", 2, "piece"),
     FoodItem("Idiyappam", 1, "piece"),
@@ -41,39 +42,32 @@ val indianFoodDatabase = listOf(
     FoodItem("Pazham Pori", 1, "piece"),
     FoodItem("Kappa (Tapioca)", 2, "cup"),
     FoodItem("Porotta", 3, "piece"),
-    // ─── Breads ──────────────────────────────────────────────
     FoodItem("Chapati / Roti", 3, "piece"),
     FoodItem("Bread (White)", 2, "slice"),
     FoodItem("Bread (Brown)", 3, "slice"),
     FoodItem("Bread Bun", 4, "piece"),
-    // ─── Rice & Biriyani ─────────────────────────────────────
     FoodItem("Rice", 4, "cup"),
     FoodItem("Fried Rice", 6, "cup"),
     FoodItem("Chicken Biriyani", 28, "plate"),
     FoodItem("Mutton Biriyani", 25, "plate"),
     FoodItem("Mandi (Chicken)", 30, "plate"),
     FoodItem("Mandi (Mutton)", 28, "plate"),
-    // ─── Eggs ────────────────────────────────────────────────
     FoodItem("Egg", 6, "piece"),
     FoodItem("Omelette", 12, "piece"),
     FoodItem("Egg Curry", 6, "piece"),
     FoodItem("Boiled Egg", 6, "piece"),
     FoodItem("Fried Egg", 6, "piece"),
-    // ─── Chicken ─────────────────────────────────────────────
     FoodItem("Chicken Curry", 25, "100g"),
     FoodItem("Chicken Fry", 28, "100g"),
     FoodItem("Butter Chicken", 22, "cup"),
     FoodItem("Kadai Chicken", 24, "cup"),
     FoodItem("Chicken Shawarma", 20, "piece"),
-    // ─── Beef & Mutton ───────────────────────────────────────
     FoodItem("Beef Curry", 22, "100g"),
     FoodItem("Beef Fry", 25, "100g"),
     FoodItem("Mutton Curry", 20, "100g"),
-    // ─── Fish & Seafood ──────────────────────────────────────
     FoodItem("Fish Curry", 20, "100g"),
     FoodItem("Fish Fry", 22, "100g"),
     FoodItem("Prawn Curry", 18, "100g"),
-    // ─── Dal & Curries ───────────────────────────────────────
     FoodItem("Dal", 9, "cup"),
     FoodItem("Sambar", 5, "cup"),
     FoodItem("Rasam", 2, "cup"),
@@ -81,32 +75,27 @@ val indianFoodDatabase = listOf(
     FoodItem("Palak Paneer", 10, "cup"),
     FoodItem("Mixed Veg Curry", 4, "cup"),
     FoodItem("Rajma", 15, "cup"),
-    // ─── Dairy ───────────────────────────────────────────────
     FoodItem("Paneer", 18, "100g"),
     FoodItem("Curd / Yogurt", 4, "100g"),
     FoodItem("Butter", 0, "tbsp"),
     FoodItem("Cheese Slice", 4, "piece"),
     FoodItem("Ghee", 0, "tbsp"),
-    // ─── Snacks & Street Food ────────────────────────────────
     FoodItem("Samosa", 4, "piece"),
     FoodItem("Vada", 3, "piece"),
     FoodItem("Pani Puri", 1, "piece"),
     FoodItem("Vada Pav", 5, "piece"),
-    // ─── Bakery ──────────────────────────────────────────────
     FoodItem("Egg Puff", 8, "piece"),
     FoodItem("Chicken Puff", 10, "piece"),
     FoodItem("Veg Puff", 4, "piece"),
     FoodItem("Cake Slice", 4, "slice"),
     FoodItem("Biscuits", 2, "piece"),
     FoodItem("Banana Bread", 3, "slice"),
-    // ─── Sweets ──────────────────────────────────────────────
     FoodItem("Jalebi", 1, "piece"),
     FoodItem("Laddu", 3, "piece"),
     FoodItem("Halwa", 2, "serving"),
     FoodItem("Kheer", 5, "cup"),
     FoodItem("Gulab Jamun", 2, "piece"),
     FoodItem("Rasgulla", 2, "piece"),
-    // ─── Fruits ──────────────────────────────────────────────
     FoodItem("Banana", 1, "piece"),
     FoodItem("Apple", 1, "piece"),
     FoodItem("Mango", 2, "cup"),
@@ -126,7 +115,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Lychee", 1, "cup"),
     FoodItem("Fig", 1, "piece"),
     FoodItem("Dates", 2, "piece"),
-    // ─── Vegetables ──────────────────────────────────────────
     FoodItem("Spinach", 3, "cup"),
     FoodItem("Carrot", 1, "piece"),
     FoodItem("Beetroot", 2, "piece"),
@@ -149,12 +137,10 @@ val indianFoodDatabase = listOf(
     FoodItem("Ash Gourd", 1, "cup"),
     FoodItem("Raw Banana", 2, "piece"),
     FoodItem("Yam", 2, "cup"),
-    // ─── Milk ────────────────────────────────────────────────
     FoodItem("Milk", 8, "glass"),
     FoodItem("Chocolate Milk", 8, "glass"),
     FoodItem("Soy Milk", 7, "glass"),
     FoodItem("Almond Milk", 2, "glass"),
-    // ─── Hot Drinks ──────────────────────────────────────────
     FoodItem("Hot Coffee with Milk", 3, "cup"),
     FoodItem("Black Coffee", 0, "cup"),
     FoodItem("Hot Tea with Milk", 2, "cup"),
@@ -163,7 +149,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Cappuccino", 4, "cup"),
     FoodItem("Green Tea", 0, "cup"),
     FoodItem("Masala Chai", 3, "cup"),
-    // ─── Shakes ──────────────────────────────────────────────
     FoodItem("Sharjah Shake", 6, "glass"),
     FoodItem("Pista Shake", 8, "glass"),
     FoodItem("Badam Shake", 7, "glass"),
@@ -185,7 +170,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Buttermilk", 3, "glass"),
     FoodItem("Coconut Water", 2, "glass"),
     FoodItem("Protein Shake", 25, "glass"),
-    // ─── Nuts & Seeds ────────────────────────────────────────
     FoodItem("Peanuts", 7, "handful"),
     FoodItem("Almonds", 6, "handful"),
     FoodItem("Cashews", 5, "handful"),
@@ -200,7 +184,6 @@ val indianFoodDatabase = listOf(
     FoodItem("Sesame Seeds", 2, "tbsp"),
     FoodItem("Fox Nuts (Makhana)", 3, "handful"),
     FoodItem("Mixed Nuts", 5, "handful"),
-    // ─── Supplements ─────────────────────────────────────────
     FoodItem("Whey Protein", 25, "scoop"),
     FoodItem("Whey Isolate", 27, "scoop"),
     FoodItem("Casein Protein", 24, "scoop"),
@@ -221,50 +204,169 @@ val indianFoodDatabase = listOf(
 
 class MainActivity : ComponentActivity() {
     private lateinit var database: AppDatabase
+    private lateinit var userPrefs: UserPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         database = AppDatabase.getDatabase(this)
-        setContent { ProfyApp(database) }
+        userPrefs = UserPreferences(this)
+        setContent { ProfyApp(database, userPrefs) }
     }
 }
 
 // ─── App Navigator ─────────────────────────────────────────────────────────
 
 @Composable
-fun ProfyApp(database: AppDatabase) {
+fun ProfyApp(database: AppDatabase, userPrefs: UserPreferences) {
+    var showOnboarding by remember { mutableStateOf(userPrefs.isFirstTime()) }
     var showAddFoodScreen by remember { mutableStateOf(false) }
     val today = LocalDate.now().toString()
     val dao = database.foodDao()
     val foodEntries by dao.getFoodsByDate(today).collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
 
-    if (showAddFoodScreen) {
-        AddFoodScreen(
-            onBack = { showAddFoodScreen = false },
-            onFoodAdded = { name, protein, unit, quantity ->
-                scope.launch {
-                    dao.insertFood(
-                        FoodEntry(
-                            name = name,
-                            proteinPerPiece = protein,
-                            unit = unit,
-                            quantity = quantity,
-                            date = today
-                        )
-                    )
+    when {
+        showOnboarding -> {
+            OnboardingScreen(
+                onComplete = { name, goal ->
+                    userPrefs.saveUserData(name, goal)
+                    showOnboarding = false
                 }
-                showAddFoodScreen = false
-            }
+            )
+        }
+        showAddFoodScreen -> {
+            AddFoodScreen(
+                onBack = { showAddFoodScreen = false },
+                onFoodAdded = { name, protein, unit, quantity ->
+                    scope.launch {
+                        dao.insertFood(
+                            FoodEntry(
+                                name = name,
+                                proteinPerPiece = protein,
+                                unit = unit,
+                                quantity = quantity,
+                                date = today
+                            )
+                        )
+                    }
+                    showAddFoodScreen = false
+                }
+            )
+        }
+        else -> {
+            HomeScreen(
+                userName = userPrefs.getUserName(),
+                dailyGoal = userPrefs.getDailyGoal(),
+                foodEntries = foodEntries,
+                onAddFoodClick = { showAddFoodScreen = true },
+                onDeleteFood = { food ->
+                    scope.launch { dao.deleteFood(food) }
+                }
+            )
+        }
+    }
+}
+
+// ─── Onboarding Screen ───────────────────────────────────────────────────────
+
+@Composable
+fun OnboardingScreen(onComplete: (String, Int) -> Unit) {
+    var name by remember { mutableStateOf("") }
+    var goal by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF2D6A4F))
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "PROFY",
+            fontSize = 36.sp,
+            fontWeight = FontWeight.ExtraBold,
+            color = Color.White
         )
-    } else {
-        HomeScreen(
-            foodEntries = foodEntries,
-            onAddFoodClick = { showAddFoodScreen = true },
-            onDeleteFood = { food ->
-                scope.launch { dao.deleteFood(food) }
-            }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Let's get to know you 👋",
+            fontSize = 16.sp,
+            color = Color(0xFFB7E4C7)
         )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Your Name") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color(0xFFB7E4C7),
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color(0xFFB7E4C7),
+                cursorColor = Color.White
+            )
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = goal,
+            onValueChange = { goal = it },
+            label = { Text("Daily Protein Goal (g)") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color(0xFFB7E4C7),
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color(0xFFB7E4C7),
+                cursorColor = Color.White
+            )
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Tip: Most beginners aim for 100-150g per day",
+            fontSize = 12.sp,
+            color = Color(0xFFB7E4C7)
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = {
+                val goalInt = goal.toIntOrNull() ?: 120
+                val finalName = name.ifBlank { "User" }
+                onComplete(finalName, goalInt)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF95D5B2)
+            ),
+            enabled = name.isNotBlank() && goal.isNotBlank()
+        ) {
+            Text(
+                "Get Started 🚀",
+                color = Color(0xFF1B4332),
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+        }
     }
 }
 
@@ -272,12 +374,12 @@ fun ProfyApp(database: AppDatabase) {
 
 @Composable
 fun HomeScreen(
+    userName: String,
+    dailyGoal: Int,
     foodEntries: List<FoodEntry>,
     onAddFoodClick: () -> Unit,
     onDeleteFood: (FoodEntry) -> Unit
 ) {
-    val userName = "Ameer"
-    val dailyGoal = 120
     val consumed = foodEntries.sumOf { it.proteinPerPiece * it.quantity }
     val remaining = dailyGoal - consumed
     var foodToDelete by remember { mutableStateOf<FoodEntry?>(null) }
