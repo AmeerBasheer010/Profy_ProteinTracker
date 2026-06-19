@@ -279,7 +279,7 @@ val activityLevels = listOf(
     ActivityLevel("Not Exercising", "Little or no exercise", 0.8),
     ActivityLevel("Light Exercise", "1-3 workouts per week", 1.2),
     ActivityLevel("Regular Exercise", "3-5 workouts per week", 1.6),
-    ActivityLevel("Heavy Training", "Gym / strength training 5+ times per week", 2.0)
+    ActivityLevel("Heavy Training", "Gym or intense training, 5-6 times per week", 2.0)
 )
 
 val weightRanges = listOf(
@@ -344,7 +344,10 @@ fun OnboardingScreen(onComplete: (String, Int) -> Unit) {
                     exactWeight = exactWeight,
                     onExactWeightChange = { exactWeight = it },
                     useExactWeight = useExactWeight,
-                    onToggleMode = { useExactWeight = it },
+                    onToggleMode = {
+                        useExactWeight = it
+                        if (it) selectedWeightRange = null else exactWeight = ""
+                    },
                     selectedRange = selectedWeightRange,
                     onRangeSelected = { selectedWeightRange = it }
                 )
@@ -430,26 +433,53 @@ fun WeightStep(
     onRangeSelected: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Text("What's your weight?", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
-        Spacer(modifier = Modifier.height(8.dp))
+        Text("What's your weight?", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Spacer(modifier = Modifier.height(6.dp))
         Text("This helps us calculate your protein needs", fontSize = 13.sp, color = Color(0xFFB7E4C7))
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(
-                selected = useExactWeight,
-                onClick = { onToggleMode(true) },
-                label = { Text("I know my weight") }
-            )
-            FilterChip(
-                selected = !useExactWeight,
-                onClick = { onToggleMode(false) },
-                label = { Text("Not sure") }
-            )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onToggleMode(true) },
+                colors = CardDefaults.cardColors(
+                    containerColor = if (useExactWeight) Color(0xFF95D5B2) else Color(0xFF1B4332)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    "I know my weight",
+                    modifier = Modifier.padding(14.dp).fillMaxWidth(),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    color = if (useExactWeight) Color(0xFF1B4332) else Color.White,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onToggleMode(false) },
+                colors = CardDefaults.cardColors(
+                    containerColor = if (!useExactWeight) Color(0xFF95D5B2) else Color(0xFF1B4332)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    "Not sure",
+                    modifier = Modifier.padding(14.dp).fillMaxWidth(),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    color = if (!useExactWeight) Color(0xFF1B4332) else Color.White,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
+        // Only ONE section shows at a time, and switching clears the other's selection
         if (useExactWeight) {
             OutlinedTextField(
                 value = exactWeight,
@@ -461,7 +491,7 @@ fun WeightStep(
                 colors = onboardingFieldColors()
             )
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(weightRanges) { (label, _) ->
                     Card(
                         modifier = Modifier
@@ -476,7 +506,8 @@ fun WeightStep(
                             label,
                             modifier = Modifier.padding(16.dp),
                             color = if (selectedRange == label) Color(0xFF1B4332) else Color.White,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp
                         )
                     }
                 }
@@ -488,29 +519,31 @@ fun WeightStep(
 @Composable
 fun ActivityStep(selected: ActivityLevel?, onSelect: (ActivityLevel) -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Text("How active are you?", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
-        Spacer(modifier = Modifier.height(20.dp))
+        Text("How active are you?", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Spacer(modifier = Modifier.height(24.dp))
 
         activityLevels.forEach { level ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = 12.dp)
                     .clickable { onSelect(level) },
                 colors = CardDefaults.cardColors(
                     containerColor = if (selected == level) Color(0xFF95D5B2) else Color(0xFF1B4332)
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(14.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(18.dp)) {
                     Text(
                         level.title,
                         fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
                         color = if (selected == level) Color(0xFF1B4332) else Color.White
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         level.description,
-                        fontSize = 12.sp,
+                        fontSize = 13.sp,
                         color = if (selected == level) Color(0xFF1B4332) else Color(0xFFB7E4C7)
                     )
                 }
@@ -530,20 +563,51 @@ fun ResultStep(
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Hey $name 👋", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
-        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            "Hey $name 👋",
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+        Spacer(modifier = Modifier.height(28.dp))
 
         if (!useManualGoal) {
-            Text("You need", fontSize = 16.sp, color = Color(0xFFB7E4C7))
-            Text(
-                "${calculatedGoal}g",
-                fontSize = 48.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF95D5B2)
-            )
-            Text("of protein today", fontSize = 16.sp, color = Color(0xFFB7E4C7))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF1B4332))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        "YOUR DAILY GOAL",
+                        fontSize = 12.sp,
+                        color = Color(0xFFB7E4C7),
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.5.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "${calculatedGoal}g",
+                        fontSize = 56.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFF95D5B2)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        "of protein every day",
+                        fontSize = 14.sp,
+                        color = Color(0xFFB7E4C7)
+                    )
+                }
+            }
         } else {
             OutlinedTextField(
                 value = manualGoal,
