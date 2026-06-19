@@ -24,4 +24,8 @@ class UserPreferences(context: Context) {
     fun getDailyGoal(): Int {
         return prefs.getInt("daily_goal", 120)
     }
+
+    fun updateGoal(newGoal: Int) {
+        prefs.edit().putInt("daily_goal", newGoal).apply()
+    }
 }

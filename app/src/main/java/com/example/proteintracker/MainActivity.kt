@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-// ─── Data ─────────────────────────────────────────────────────────────────
+// ─── Food Data ────────────────────────────────────────────────────────────
 
 data class FoodItem(val name: String, val proteinPerPiece: Int, val unit: String)
 
@@ -269,106 +269,315 @@ fun ProfyApp(database: AppDatabase, userPrefs: UserPreferences) {
 
 // ─── Onboarding Screen ───────────────────────────────────────────────────────
 
+data class ActivityLevel(
+    val title: String,
+    val description: String,
+    val multiplier: Double
+)
+
+val activityLevels = listOf(
+    ActivityLevel("Not Exercising", "Little or no exercise", 0.8),
+    ActivityLevel("Light Exercise", "1-3 workouts per week", 1.2),
+    ActivityLevel("Regular Exercise", "3-5 workouts per week", 1.6),
+    ActivityLevel("Heavy Training", "Gym / strength training 5+ times per week", 2.0)
+)
+
+val weightRanges = listOf(
+    "Under 50kg" to 45,
+    "50-60kg" to 55,
+    "60-70kg" to 65,
+    "70-80kg" to 75,
+    "80-90kg" to 85,
+    "Above 90kg" to 95
+)
+
 @Composable
 fun OnboardingScreen(onComplete: (String, Int) -> Unit) {
+    var currentStep by remember { mutableStateOf(1) }
     var name by remember { mutableStateOf("") }
-    var goal by remember { mutableStateOf("") }
+    var exactWeight by remember { mutableStateOf("") }
+    var selectedWeightRange by remember { mutableStateOf<String?>(null) }
+    var useExactWeight by remember { mutableStateOf(true) }
+    var selectedActivity by remember { mutableStateOf<ActivityLevel?>(null) }
+    var manualGoal by remember { mutableStateOf("") }
+    var useManualGoal by remember { mutableStateOf(false) }
+
+    val finalWeight: Int = if (useExactWeight) {
+        exactWeight.toIntOrNull() ?: 65
+    } else {
+        weightRanges.find { it.first == selectedWeightRange }?.second ?: 65
+    }
+
+    val calculatedGoal: Int = if (useManualGoal) {
+        manualGoal.toIntOrNull() ?: 120
+    } else {
+        ((finalWeight * (selectedActivity?.multiplier ?: 1.2)).toInt())
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF2D6A4F))
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center
+            .padding(24.dp)
     ) {
-        Text(
-            text = "PROFY",
-            fontSize = 36.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = Color.White
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            repeat(4) { index ->
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(4.dp)
+                        .background(
+                            if (index < currentStep) Color(0xFF95D5B2) else Color(0xFF1B4332),
+                            RoundedCornerShape(2.dp)
+                        )
+                )
+            }
+        }
 
+        Box(modifier = Modifier.weight(1f)) {
+            when (currentStep) {
+                1 -> NameStep(name) { name = it }
+                2 -> WeightStep(
+                    exactWeight = exactWeight,
+                    onExactWeightChange = { exactWeight = it },
+                    useExactWeight = useExactWeight,
+                    onToggleMode = { useExactWeight = it },
+                    selectedRange = selectedWeightRange,
+                    onRangeSelected = { selectedWeightRange = it }
+                )
+                3 -> ActivityStep(selectedActivity) { selectedActivity = it }
+                4 -> ResultStep(
+                    name = name,
+                    calculatedGoal = calculatedGoal,
+                    useManualGoal = useManualGoal,
+                    manualGoal = manualGoal,
+                    onToggleManual = { useManualGoal = it },
+                    onManualGoalChange = { manualGoal = it }
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            if (currentStep > 1) {
+                TextButton(onClick = { currentStep-- }) {
+                    Text("Back", color = Color(0xFFB7E4C7))
+                }
+            } else {
+                Spacer(modifier = Modifier.width(1.dp))
+            }
+
+            val canProceed = when (currentStep) {
+                1 -> name.isNotBlank()
+                2 -> if (useExactWeight) exactWeight.isNotBlank() else selectedWeightRange != null
+                3 -> selectedActivity != null
+                4 -> true
+                else -> false
+            }
+
+            Button(
+                onClick = {
+                    if (currentStep < 4) {
+                        currentStep++
+                    } else {
+                        onComplete(name, calculatedGoal)
+                    }
+                },
+                enabled = canProceed,
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF95D5B2)),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Text(
+                    if (currentStep < 4) "Next" else "Let's go 🚀",
+                    color = Color(0xFF1B4332),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NameStep(name: String, onNameChange: (String) -> Unit) {
+    Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
+        Text("PROFY", fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, color = Color.White)
         Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Let's get to know you 👋",
-            fontSize = 16.sp,
-            color = Color(0xFFB7E4C7)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
+        Text("What's your name?", fontSize = 16.sp, color = Color(0xFFB7E4C7))
+        Spacer(modifier = Modifier.height(24.dp))
         OutlinedTextField(
             value = name,
-            onValueChange = { name = it },
+            onValueChange = onNameChange,
             label = { Text("Your Name") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color(0xFFB7E4C7),
-                focusedLabelColor = Color.White,
-                unfocusedLabelColor = Color(0xFFB7E4C7),
-                cursorColor = Color.White
-            )
+            colors = onboardingFieldColors()
         )
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = goal,
-            onValueChange = { goal = it },
-            label = { Text("Daily Protein Goal (g)") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color(0xFFB7E4C7),
-                focusedLabelColor = Color.White,
-                unfocusedLabelColor = Color(0xFFB7E4C7),
-                cursorColor = Color.White
-            )
-        )
-
+@Composable
+fun WeightStep(
+    exactWeight: String,
+    onExactWeightChange: (String) -> Unit,
+    useExactWeight: Boolean,
+    onToggleMode: (Boolean) -> Unit,
+    selectedRange: String?,
+    onRangeSelected: (String) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text("What's your weight?", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
         Spacer(modifier = Modifier.height(8.dp))
+        Text("This helps us calculate your protein needs", fontSize = 13.sp, color = Color(0xFFB7E4C7))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
-            text = "Tip: Most beginners aim for 100-150g per day",
-            fontSize = 12.sp,
-            color = Color(0xFFB7E4C7)
-        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = useExactWeight,
+                onClick = { onToggleMode(true) },
+                label = { Text("I know my weight") }
+            )
+            FilterChip(
+                selected = !useExactWeight,
+                onClick = { onToggleMode(false) },
+                label = { Text("Not sure") }
+            )
+        }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Button(
-            onClick = {
-                val goalInt = goal.toIntOrNull() ?: 120
-                val finalName = name.ifBlank { "User" }
-                onComplete(finalName, goalInt)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp),
-            shape = RoundedCornerShape(14.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF95D5B2)
-            ),
-            enabled = name.isNotBlank() && goal.isNotBlank()
-        ) {
+        if (useExactWeight) {
+            OutlinedTextField(
+                value = exactWeight,
+                onValueChange = onExactWeightChange,
+                label = { Text("Weight (kg)") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = onboardingFieldColors()
+            )
+        } else {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(weightRanges) { (label, _) ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onRangeSelected(label) },
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (selectedRange == label) Color(0xFF95D5B2) else Color(0xFF1B4332)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            label,
+                            modifier = Modifier.padding(16.dp),
+                            color = if (selectedRange == label) Color(0xFF1B4332) else Color.White,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ActivityStep(selected: ActivityLevel?, onSelect: (ActivityLevel) -> Unit) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text("How active are you?", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Spacer(modifier = Modifier.height(20.dp))
+
+        activityLevels.forEach { level ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp)
+                    .clickable { onSelect(level) },
+                colors = CardDefaults.cardColors(
+                    containerColor = if (selected == level) Color(0xFF95D5B2) else Color(0xFF1B4332)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        level.title,
+                        fontWeight = FontWeight.Bold,
+                        color = if (selected == level) Color(0xFF1B4332) else Color.White
+                    )
+                    Text(
+                        level.description,
+                        fontSize = 12.sp,
+                        color = if (selected == level) Color(0xFF1B4332) else Color(0xFFB7E4C7)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ResultStep(
+    name: String,
+    calculatedGoal: Int,
+    useManualGoal: Boolean,
+    manualGoal: String,
+    onToggleManual: (Boolean) -> Unit,
+    onManualGoalChange: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text("Hey $name 👋", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Spacer(modifier = Modifier.height(12.dp))
+
+        if (!useManualGoal) {
+            Text("You need", fontSize = 16.sp, color = Color(0xFFB7E4C7))
             Text(
-                "Get Started 🚀",
-                color = Color(0xFF1B4332),
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                "${calculatedGoal}g",
+                fontSize = 48.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color(0xFF95D5B2)
+            )
+            Text("of protein today", fontSize = 16.sp, color = Color(0xFFB7E4C7))
+        } else {
+            OutlinedTextField(
+                value = manualGoal,
+                onValueChange = onManualGoalChange,
+                label = { Text("Set your own goal (g)") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = onboardingFieldColors()
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        TextButton(onClick = { onToggleManual(!useManualGoal) }) {
+            Text(
+                if (!useManualGoal) "Set my own goal instead" else "Use calculated goal instead",
+                color = Color(0xFFB7E4C7),
+                fontSize = 13.sp
             )
         }
     }
 }
+
+@Composable
+fun onboardingFieldColors() = OutlinedTextFieldDefaults.colors(
+    focusedTextColor = Color.White,
+    unfocusedTextColor = Color.White,
+    focusedBorderColor = Color.White,
+    unfocusedBorderColor = Color(0xFFB7E4C7),
+    focusedLabelColor = Color.White,
+    unfocusedLabelColor = Color(0xFFB7E4C7),
+    cursorColor = Color.White
+)
 
 // ─── Home Screen ───────────────────────────────────────────────────────────
 
