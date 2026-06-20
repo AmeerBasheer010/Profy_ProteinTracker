@@ -10,11 +10,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -828,9 +830,20 @@ fun AddFoodScreen(
     var searchQuery by remember { mutableStateOf("") }
     var selectedFood by remember { mutableStateOf<FoodItem?>(null) }
     var quantity by remember { mutableStateOf(1) }
+    var showCustomFoodForm by remember { mutableStateOf(false) }
 
     val filteredFoods = indianFoodDatabase.filter {
         it.name.contains(searchQuery, ignoreCase = true)
+    }
+
+    if (showCustomFoodForm) {
+        CustomFoodScreen(
+            onBack = { showCustomFoodForm = false },
+            onFoodAdded = { name, protein, unit, qty ->
+                onFoodAdded(name, protein, unit, qty)
+            }
+        )
+        return
     }
 
     Column(
@@ -869,6 +882,19 @@ fun AddFoodScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Custom food entry link
+            Text(
+                text = "Can't find your food? Add it manually →",
+                fontSize = 13.sp,
+                color = Color(0xFF2D6A4F),
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .clickable { showCustomFoodForm = true }
+                    .padding(vertical = 4.dp)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -987,6 +1013,197 @@ fun AddFoodScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+// ─── Custom Food Screen ─────────────────────────────────────────────────────
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomFoodScreen(
+    onBack: () -> Unit,
+    onFoodAdded: (String, Int, String, Int) -> Unit
+) {
+    var foodName by remember { mutableStateOf("") }
+    var selectedUnit by remember { mutableStateOf("piece") }
+    var unitDropdownExpanded by remember { mutableStateOf(false) }
+    var proteinPerUnit by remember { mutableStateOf("") }
+    var quantity by remember { mutableStateOf(1) }
+
+    val unitOptions = listOf("piece", "cup", "tbsp", "plate", "100g", "glass", "handful", "scoop", "slice", "serving")
+
+    val proteinInt = proteinPerUnit.toIntOrNull() ?: 0
+    val totalProtein = proteinInt * quantity
+    val canAdd = foodName.isNotBlank() && proteinPerUnit.isNotBlank()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF8F8F8))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF2D6A4F))
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White,
+                modifier = Modifier.clickable { onBack() }
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = "Add Custom Food",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                "Food Name",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF555555)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            OutlinedTextField(
+                value = foodName,
+                onValueChange = { foodName = it },
+                placeholder = { Text("e.g. Grandma's Special Curry") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                "Quantity Unit",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF555555)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            ExposedDropdownMenuBox(
+                expanded = unitDropdownExpanded,
+                onExpandedChange = { unitDropdownExpanded = it }
+            ) {
+                OutlinedTextField(
+                    value = selectedUnit,
+                    onValueChange = {},
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    shape = RoundedCornerShape(12.dp),
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitDropdownExpanded) }
+                )
+                ExposedDropdownMenu(
+                    expanded = unitDropdownExpanded,
+                    onDismissRequest = { unitDropdownExpanded = false }
+                ) {
+                    unitOptions.forEach { unit ->
+                        DropdownMenuItem(
+                            text = { Text(unit) },
+                            onClick = {
+                                selectedUnit = unit
+                                unitDropdownExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                "Protein per $selectedUnit (g)",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF555555)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            OutlinedTextField(
+                value = proteinPerUnit,
+                onValueChange = { proteinPerUnit = it },
+                placeholder = { Text("e.g. 12") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                shape = RoundedCornerShape(12.dp)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                "💡 Tip: Search \"$foodName protein content\" online if you're not sure",
+                fontSize = 11.sp,
+                color = Color(0xFFAAAAAA)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF2D6A4F))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("How many ${selectedUnit}s?", color = Color.White)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Button(
+                                onClick = { if (quantity > 1) quantity-- },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B4332)),
+                                contentPadding = PaddingValues(horizontal = 12.dp)
+                            ) { Text("-") }
+                            Text(
+                                "$quantity",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                            Button(
+                                onClick = { quantity++ },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B4332)),
+                                contentPadding = PaddingValues(horizontal = 12.dp)
+                            ) { Text("+") }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "Total Protein: ${totalProtein}g",
+                        color = Color(0xFF95D5B2),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    onFoodAdded(foodName, proteinInt, selectedUnit, quantity)
+                },
+                enabled = canAdd,
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D6A4F))
+            ) {
+                Text("Add to my list ✓", fontWeight = FontWeight.Bold)
             }
         }
     }
