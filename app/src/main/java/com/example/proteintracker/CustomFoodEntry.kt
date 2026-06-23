@@ -3,13 +3,11 @@ package com.example.proteintracker
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "food_entries")
-data class FoodEntry(
+@Entity(tableName = "custom_foods")
+data class CustomFoodEntry(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,
-    val proteinPerPiece: Double,
-    val unit: String,
-    val quantity: Int,
-    val date: String
+    val proteinPerUnit: Double,
+    val unit: String
 )

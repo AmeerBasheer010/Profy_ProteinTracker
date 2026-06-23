@@ -28,178 +28,187 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+
+fun formatProtein(value: Double): String {
+    return if (value == value.toInt().toDouble()) {
+        "${value.toInt()}"
+    } else {
+        String.format("%.1f", value)
+    }
+}
+
 // ─── Food Data ────────────────────────────────────────────────────────────
 
-data class FoodItem(val name: String, val proteinPerPiece: Int, val unit: String)
+data class FoodItem(val name: String, val proteinPerPiece: Double, val unit: String)
 
 val indianFoodDatabase = listOf(
-    FoodItem("Appam", 1, "piece"),
-    FoodItem("Idli", 2, "piece"),
-    FoodItem("Idiyappam", 1, "piece"),
-    FoodItem("Dosa", 3, "piece"),
-    FoodItem("Masala Dosa", 5, "piece"),
-    FoodItem("Puttu", 3, "serving"),
-    FoodItem("Pathiri", 2, "piece"),
-    FoodItem("Unniyappam", 1, "piece"),
-    FoodItem("Pazham Pori", 1, "piece"),
-    FoodItem("Kappa (Tapioca)", 2, "cup"),
-    FoodItem("Porotta", 3, "piece"),
-    FoodItem("Chapati / Roti", 3, "piece"),
-    FoodItem("Bread (White)", 2, "slice"),
-    FoodItem("Bread (Brown)", 3, "slice"),
-    FoodItem("Bread Bun", 4, "piece"),
-    FoodItem("Rice", 4, "cup"),
-    FoodItem("Fried Rice", 6, "cup"),
-    FoodItem("Chicken Biriyani", 28, "plate"),
-    FoodItem("Mutton Biriyani", 25, "plate"),
-    FoodItem("Mandi (Chicken)", 30, "plate"),
-    FoodItem("Mandi (Mutton)", 28, "plate"),
-    FoodItem("Egg", 6, "piece"),
-    FoodItem("Omelette", 12, "piece"),
-    FoodItem("Egg Curry", 6, "piece"),
-    FoodItem("Boiled Egg", 6, "piece"),
-    FoodItem("Fried Egg", 6, "piece"),
-    FoodItem("Chicken Curry", 25, "100g"),
-    FoodItem("Chicken Fry", 28, "100g"),
-    FoodItem("Butter Chicken", 22, "cup"),
-    FoodItem("Kadai Chicken", 24, "cup"),
-    FoodItem("Chicken Shawarma", 20, "piece"),
-    FoodItem("Beef Curry", 22, "100g"),
-    FoodItem("Beef Fry", 25, "100g"),
-    FoodItem("Mutton Curry", 20, "100g"),
-    FoodItem("Fish Curry", 20, "100g"),
-    FoodItem("Fish Fry", 22, "100g"),
-    FoodItem("Prawn Curry", 18, "100g"),
-    FoodItem("Dal", 9, "cup"),
-    FoodItem("Sambar", 5, "cup"),
-    FoodItem("Rasam", 2, "cup"),
-    FoodItem("Chana Masala", 12, "cup"),
-    FoodItem("Palak Paneer", 10, "cup"),
-    FoodItem("Mixed Veg Curry", 4, "cup"),
-    FoodItem("Rajma", 15, "cup"),
-    FoodItem("Paneer", 18, "100g"),
-    FoodItem("Curd / Yogurt", 4, "100g"),
-    FoodItem("Butter", 0, "tbsp"),
-    FoodItem("Cheese Slice", 4, "piece"),
-    FoodItem("Ghee", 0, "tbsp"),
-    FoodItem("Samosa", 4, "piece"),
-    FoodItem("Vada", 3, "piece"),
-    FoodItem("Pani Puri", 1, "piece"),
-    FoodItem("Vada Pav", 5, "piece"),
-    FoodItem("Egg Puff", 8, "piece"),
-    FoodItem("Chicken Puff", 10, "piece"),
-    FoodItem("Veg Puff", 4, "piece"),
-    FoodItem("Cake Slice", 4, "slice"),
-    FoodItem("Biscuits", 2, "piece"),
-    FoodItem("Banana Bread", 3, "slice"),
-    FoodItem("Jalebi", 1, "piece"),
-    FoodItem("Laddu", 3, "piece"),
-    FoodItem("Halwa", 2, "serving"),
-    FoodItem("Kheer", 5, "cup"),
-    FoodItem("Gulab Jamun", 2, "piece"),
-    FoodItem("Rasgulla", 2, "piece"),
-    FoodItem("Banana", 1, "piece"),
-    FoodItem("Apple", 1, "piece"),
-    FoodItem("Mango", 2, "cup"),
-    FoodItem("Watermelon", 1, "cup"),
-    FoodItem("Grapes", 1, "cup"),
-    FoodItem("Orange", 1, "piece"),
-    FoodItem("Papaya", 1, "cup"),
-    FoodItem("Pineapple", 1, "cup"),
-    FoodItem("Pomegranate", 2, "cup"),
-    FoodItem("Guava", 2, "piece"),
-    FoodItem("Pear", 1, "piece"),
-    FoodItem("Strawberry", 1, "cup"),
-    FoodItem("Kiwi", 1, "piece"),
-    FoodItem("Coconut", 2, "piece"),
-    FoodItem("Jackfruit", 2, "cup"),
-    FoodItem("Sapota (Chikoo)", 1, "piece"),
-    FoodItem("Lychee", 1, "cup"),
-    FoodItem("Fig", 1, "piece"),
-    FoodItem("Dates", 2, "piece"),
-    FoodItem("Spinach", 3, "cup"),
-    FoodItem("Carrot", 1, "piece"),
-    FoodItem("Beetroot", 2, "piece"),
-    FoodItem("Potato", 2, "piece"),
-    FoodItem("Broccoli", 4, "cup"),
-    FoodItem("Green Peas", 5, "cup"),
-    FoodItem("Cucumber", 1, "piece"),
-    FoodItem("Tomato", 1, "piece"),
-    FoodItem("Onion", 1, "piece"),
-    FoodItem("Cabbage", 2, "cup"),
-    FoodItem("Cauliflower", 3, "cup"),
-    FoodItem("Beans", 2, "cup"),
-    FoodItem("Drumstick (Moringa)", 2, "piece"),
-    FoodItem("Bitter Gourd", 1, "piece"),
-    FoodItem("Bottle Gourd", 1, "cup"),
-    FoodItem("Pumpkin", 1, "cup"),
-    FoodItem("Corn", 3, "piece"),
-    FoodItem("Mushroom", 3, "cup"),
-    FoodItem("Sweet Potato", 2, "piece"),
-    FoodItem("Ash Gourd", 1, "cup"),
-    FoodItem("Raw Banana", 2, "piece"),
-    FoodItem("Yam", 2, "cup"),
-    FoodItem("Milk", 8, "glass"),
-    FoodItem("Chocolate Milk", 8, "glass"),
-    FoodItem("Soy Milk", 7, "glass"),
-    FoodItem("Almond Milk", 2, "glass"),
-    FoodItem("Hot Coffee with Milk", 3, "cup"),
-    FoodItem("Black Coffee", 0, "cup"),
-    FoodItem("Hot Tea with Milk", 2, "cup"),
-    FoodItem("Black Tea", 0, "cup"),
-    FoodItem("Latte", 5, "cup"),
-    FoodItem("Cappuccino", 4, "cup"),
-    FoodItem("Green Tea", 0, "cup"),
-    FoodItem("Masala Chai", 3, "cup"),
-    FoodItem("Sharjah Shake", 6, "glass"),
-    FoodItem("Pista Shake", 8, "glass"),
-    FoodItem("Badam Shake", 7, "glass"),
-    FoodItem("Banana Shake", 7, "glass"),
-    FoodItem("Mango Shake", 5, "glass"),
-    FoodItem("Chocolate Shake", 8, "glass"),
-    FoodItem("Strawberry Shake", 5, "glass"),
-    FoodItem("Cold Coffee", 5, "glass"),
-    FoodItem("Vanilla Shake", 6, "glass"),
-    FoodItem("Mixed Fruit Shake", 4, "glass"),
-    FoodItem("Papaya Shake", 4, "glass"),
-    FoodItem("Chikoo Shake", 4, "glass"),
-    FoodItem("Avocado Shake", 5, "glass"),
-    FoodItem("Dates Shake", 5, "glass"),
-    FoodItem("Rose Milk", 4, "glass"),
-    FoodItem("Lassi", 6, "glass"),
-    FoodItem("Sweet Lassi", 5, "glass"),
-    FoodItem("Mango Lassi", 5, "glass"),
-    FoodItem("Buttermilk", 3, "glass"),
-    FoodItem("Coconut Water", 2, "glass"),
-    FoodItem("Protein Shake", 25, "glass"),
-    FoodItem("Peanuts", 7, "handful"),
-    FoodItem("Almonds", 6, "handful"),
-    FoodItem("Cashews", 5, "handful"),
-    FoodItem("Pistachios", 6, "handful"),
-    FoodItem("Walnuts", 4, "handful"),
-    FoodItem("Raisins", 1, "handful"),
-    FoodItem("Chia Seeds", 3, "tbsp"),
-    FoodItem("Flax Seeds", 2, "tbsp"),
-    FoodItem("Sunflower Seeds", 3, "tbsp"),
-    FoodItem("Pumpkin Seeds", 4, "tbsp"),
-    FoodItem("Hemp Seeds", 5, "tbsp"),
-    FoodItem("Sesame Seeds", 2, "tbsp"),
-    FoodItem("Fox Nuts (Makhana)", 3, "handful"),
-    FoodItem("Mixed Nuts", 5, "handful"),
-    FoodItem("Whey Protein", 25, "scoop"),
-    FoodItem("Whey Isolate", 27, "scoop"),
-    FoodItem("Casein Protein", 24, "scoop"),
-    FoodItem("Plant Protein", 20, "scoop"),
-    FoodItem("Mass Gainer", 30, "scoop"),
-    FoodItem("Protein Bar", 20, "piece"),
-    FoodItem("Peanut Butter", 4, "tbsp"),
-    FoodItem("BCAA", 0, "scoop"),
-    FoodItem("Creatine", 0, "scoop"),
-    FoodItem("Pre-Workout", 0, "scoop"),
-    FoodItem("Multivitamin", 0, "piece"),
-    FoodItem("Fish Oil", 0, "piece"),
-    FoodItem("Vitamin D", 0, "piece"),
-    FoodItem("Zinc", 0, "piece")
+    FoodItem("Appam", 1.0, "piece"),
+    FoodItem("Idli", 2.0, "piece"),
+    FoodItem("Idiyappam", 1.0, "piece"),
+    FoodItem("Dosa", 3.0, "piece"),
+    FoodItem("Masala Dosa", 5.0, "piece"),
+    FoodItem("Puttu", 3.0, "serving"),
+    FoodItem("Pathiri", 2.0, "piece"),
+    FoodItem("Unniyappam", 1.0, "piece"),
+    FoodItem("Pazham Pori", 1.0, "piece"),
+    FoodItem("Kappa (Tapioca)", 2.0, "cup"),
+    FoodItem("Porotta", 3.0, "piece"),
+    FoodItem("Chapati / Roti", 3.0, "piece"),
+    FoodItem("Bread (White)", 2.0, "slice"),
+    FoodItem("Bread (Brown)", 3.0, "slice"),
+    FoodItem("Bread Bun", 4.0, "piece"),
+    FoodItem("Rice", 4.0, "cup"),
+    FoodItem("Fried Rice", 6.0, "cup"),
+    FoodItem("Chicken Biriyani", 28.0, "plate"),
+    FoodItem("Mutton Biriyani", 25.0, "plate"),
+    FoodItem("Mandi (Chicken)", 30.0, "plate"),
+    FoodItem("Mandi (Mutton)", 28.0, "plate"),
+    FoodItem("Egg", 6.0, "piece"),
+    FoodItem("Omelette", 12.0, "piece"),
+    FoodItem("Egg Curry", 6.0, "piece"),
+    FoodItem("Boiled Egg", 6.0, "piece"),
+    FoodItem("Fried Egg", 6.0, "piece"),
+    FoodItem("Chicken Curry", 25.0, "100g"),
+    FoodItem("Chicken Fry", 28.0, "100g"),
+    FoodItem("Butter Chicken", 22.0, "cup"),
+    FoodItem("Kadai Chicken", 24.0, "cup"),
+    FoodItem("Chicken Shawarma", 20.0, "piece"),
+    FoodItem("Beef Curry", 22.0, "100g"),
+    FoodItem("Beef Fry", 25.0, "100g"),
+    FoodItem("Mutton Curry", 20.0, "100g"),
+    FoodItem("Fish Curry", 20.0, "100g"),
+    FoodItem("Fish Fry", 22.0, "100g"),
+    FoodItem("Prawn Curry", 18.0, "100g"),
+    FoodItem("Dal", 9.0, "cup"),
+    FoodItem("Sambar", 5.0, "cup"),
+    FoodItem("Rasam", 2.0, "cup"),
+    FoodItem("Chana Masala", 12.0, "cup"),
+    FoodItem("Palak Paneer", 10.0, "cup"),
+    FoodItem("Mixed Veg Curry", 4.0, "cup"),
+    FoodItem("Rajma", 15.0, "cup"),
+    FoodItem("Paneer", 18.0, "100g"),
+    FoodItem("Curd / Yogurt", 4.0, "100g"),
+    FoodItem("Butter", 0.0, "tbsp"),
+    FoodItem("Cheese Slice", 4.0, "piece"),
+    FoodItem("Ghee", 0.0, "tbsp"),
+    FoodItem("Samosa", 4.0, "piece"),
+    FoodItem("Vada", 3.0, "piece"),
+    FoodItem("Pani Puri", 1.0, "piece"),
+    FoodItem("Vada Pav", 5.0, "piece"),
+    FoodItem("Egg Puff", 8.0, "piece"),
+    FoodItem("Chicken Puff", 10.0, "piece"),
+    FoodItem("Veg Puff", 4.0, "piece"),
+    FoodItem("Cake Slice", 4.0, "slice"),
+    FoodItem("Biscuits", 2.0, "piece"),
+    FoodItem("Banana Bread", 3.0, "slice"),
+    FoodItem("Jalebi", 1.0, "piece"),
+    FoodItem("Laddu", 3.0, "piece"),
+    FoodItem("Halwa", 2.0, "serving"),
+    FoodItem("Kheer", 5.0, "cup"),
+    FoodItem("Gulab Jamun", 2.0, "piece"),
+    FoodItem("Rasgulla", 2.0, "piece"),
+    FoodItem("Banana", 1.0, "piece"),
+    FoodItem("Apple", 1.0, "piece"),
+    FoodItem("Mango", 2.0, "cup"),
+    FoodItem("Watermelon", 1.0, "cup"),
+    FoodItem("Grapes", 1.0, "cup"),
+    FoodItem("Orange", 1.0, "piece"),
+    FoodItem("Papaya", 1.0, "cup"),
+    FoodItem("Pineapple", 1.0, "cup"),
+    FoodItem("Pomegranate", 2.0, "cup"),
+    FoodItem("Guava", 2.0, "piece"),
+    FoodItem("Pear", 1.0, "piece"),
+    FoodItem("Strawberry", 1.0, "cup"),
+    FoodItem("Kiwi", 1.0, "piece"),
+    FoodItem("Coconut", 2.0, "piece"),
+    FoodItem("Jackfruit", 2.0, "cup"),
+    FoodItem("Sapota (Chikoo)", 1.0, "piece"),
+    FoodItem("Lychee", 1.0, "cup"),
+    FoodItem("Fig", 1.0, "piece"),
+    FoodItem("Dates", 2.0, "piece"),
+    FoodItem("Spinach", 3.0, "cup"),
+    FoodItem("Carrot", 1.0, "piece"),
+    FoodItem("Beetroot", 2.0, "piece"),
+    FoodItem("Potato", 2.0, "piece"),
+    FoodItem("Broccoli", 4.0, "cup"),
+    FoodItem("Green Peas", 5.0, "cup"),
+    FoodItem("Cucumber", 1.0, "piece"),
+    FoodItem("Tomato", 1.0, "piece"),
+    FoodItem("Onion", 1.0, "piece"),
+    FoodItem("Cabbage", 2.0, "cup"),
+    FoodItem("Cauliflower", 3.0, "cup"),
+    FoodItem("Beans", 2.0, "cup"),
+    FoodItem("Drumstick (Moringa)", 2.0, "piece"),
+    FoodItem("Bitter Gourd", 1.0, "piece"),
+    FoodItem("Bottle Gourd", 1.0, "cup"),
+    FoodItem("Pumpkin", 1.0, "cup"),
+    FoodItem("Corn", 3.0, "piece"),
+    FoodItem("Mushroom", 3.0, "cup"),
+    FoodItem("Sweet Potato", 2.0, "piece"),
+    FoodItem("Ash Gourd", 1.0, "cup"),
+    FoodItem("Raw Banana", 2.0, "piece"),
+    FoodItem("Yam", 2.0, "cup"),
+    FoodItem("Milk", 8.0, "glass"),
+    FoodItem("Chocolate Milk", 8.0, "glass"),
+    FoodItem("Soy Milk", 7.0, "glass"),
+    FoodItem("Almond Milk", 2.0, "glass"),
+    FoodItem("Hot Coffee with Milk", 3.0, "cup"),
+    FoodItem("Black Coffee", 0.0, "cup"),
+    FoodItem("Hot Tea with Milk", 2.0, "cup"),
+    FoodItem("Black Tea", 0.0, "cup"),
+    FoodItem("Latte", 5.0, "cup"),
+    FoodItem("Cappuccino", 4.0, "cup"),
+    FoodItem("Green Tea", 0.0, "cup"),
+    FoodItem("Masala Chai", 3.0, "cup"),
+    FoodItem("Sharjah Shake", 6.0, "glass"),
+    FoodItem("Pista Shake", 8.0, "glass"),
+    FoodItem("Badam Shake", 7.0, "glass"),
+    FoodItem("Banana Shake", 7.0, "glass"),
+    FoodItem("Mango Shake", 5.0, "glass"),
+    FoodItem("Chocolate Shake", 8.0, "glass"),
+    FoodItem("Strawberry Shake", 5.0, "glass"),
+    FoodItem("Cold Coffee", 5.0, "glass"),
+    FoodItem("Vanilla Shake", 6.0, "glass"),
+    FoodItem("Mixed Fruit Shake", 4.0, "glass"),
+    FoodItem("Papaya Shake", 4.0, "glass"),
+    FoodItem("Chikoo Shake", 4.0, "glass"),
+    FoodItem("Avocado Shake", 5.0, "glass"),
+    FoodItem("Dates Shake", 5.0, "glass"),
+    FoodItem("Rose Milk", 4.0, "glass"),
+    FoodItem("Lassi", 6.0, "glass"),
+    FoodItem("Sweet Lassi", 5.0, "glass"),
+    FoodItem("Mango Lassi", 5.0, "glass"),
+    FoodItem("Buttermilk", 3.0, "glass"),
+    FoodItem("Coconut Water", 2.0, "glass"),
+    FoodItem("Protein Shake", 25.0, "glass"),
+    FoodItem("Peanuts", 7.0, "handful"),
+    FoodItem("Almonds", 6.0, "handful"),
+    FoodItem("Cashews", 5.0, "handful"),
+    FoodItem("Pistachios", 6.0, "handful"),
+    FoodItem("Walnuts", 4.0, "handful"),
+    FoodItem("Raisins", 1.0, "handful"),
+    FoodItem("Chia Seeds", 3.0, "tbsp"),
+    FoodItem("Flax Seeds", 2.0, "tbsp"),
+    FoodItem("Sunflower Seeds", 3.0, "tbsp"),
+    FoodItem("Pumpkin Seeds", 4.0, "tbsp"),
+    FoodItem("Hemp Seeds", 5.0, "tbsp"),
+    FoodItem("Sesame Seeds", 2.0, "tbsp"),
+    FoodItem("Fox Nuts (Makhana)", 3.0, "handful"),
+    FoodItem("Mixed Nuts", 5.0, "handful"),
+    FoodItem("Whey Protein", 25.0, "scoop"),
+    FoodItem("Whey Isolate", 27.0, "scoop"),
+    FoodItem("Casein Protein", 24.0, "scoop"),
+    FoodItem("Plant Protein", 20.0, "scoop"),
+    FoodItem("Mass Gainer", 30.0, "scoop"),
+    FoodItem("Protein Bar", 20.0, "piece"),
+    FoodItem("Peanut Butter", 4.0, "tbsp"),
+    FoodItem("BCAA", 0.0, "scoop"),
+    FoodItem("Creatine", 0.0, "scoop"),
+    FoodItem("Pre-Workout", 0.0, "scoop"),
+    FoodItem("Multivitamin", 0.0, "piece"),
+    FoodItem("Fish Oil", 0.0, "piece"),
+    FoodItem("Vitamin D", 0.0, "piece"),
+    FoodItem("Zinc", 0.0, "piece")
 )
 
 // ─── Main ──────────────────────────────────────────────────────────────────
@@ -224,7 +233,9 @@ fun ProfyApp(database: AppDatabase, userPrefs: UserPreferences) {
     var showAddFoodScreen by remember { mutableStateOf(false) }
     val today = LocalDate.now().toString()
     val dao = database.foodDao()
+    val customFoodDao = database.customFoodDao()
     val foodEntries by dao.getFoodsByDate(today).collectAsState(initial = emptyList())
+    val customFoods by customFoodDao.getAllCustomFoods().collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
 
     when {
@@ -238,6 +249,7 @@ fun ProfyApp(database: AppDatabase, userPrefs: UserPreferences) {
         }
         showAddFoodScreen -> {
             AddFoodScreen(
+                customFoods = customFoods,
                 onBack = { showAddFoodScreen = false },
                 onFoodAdded = { name, protein, unit, quantity ->
                     scope.launch {
@@ -252,6 +264,16 @@ fun ProfyApp(database: AppDatabase, userPrefs: UserPreferences) {
                         )
                     }
                     showAddFoodScreen = false
+                },
+                onCustomFoodSaved = { name, protein, unit ->
+                    scope.launch {
+                        customFoodDao.insertCustomFood(
+                            CustomFoodEntry(name = name, proteinPerUnit = protein, unit = unit)
+                        )
+                    }
+                },
+                onDeleteCustomFood = { customFood ->
+                    scope.launch { customFoodDao.deleteCustomFood(customFood) }
                 }
             )
         }
@@ -713,8 +735,8 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     ProgressStat("${dailyGoal}g", "Goal")
-                    ProgressStat("${consumed}g", "Consumed")
-                    ProgressStat("${remaining}g", "Remaining")
+                    ProgressStat("${formatProtein(consumed)}g", "Consumed")
+                    ProgressStat("${formatProtein(remaining)}g", "Remaining")
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 LinearProgressIndicator(
@@ -776,7 +798,7 @@ fun HomeScreen(
                             }
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    "${food.proteinPerPiece * food.quantity}g protein",
+                                    "${formatProtein(food.proteinPerPiece * food.quantity)}g protein",
                                     fontSize = 14.sp,
                                     color = Color(0xFF2D6A4F),
                                     fontWeight = FontWeight.Bold
@@ -824,15 +846,23 @@ fun ProgressStat(value: String, label: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFoodScreen(
+    customFoods: List<CustomFoodEntry>,
     onBack: () -> Unit,
-    onFoodAdded: (String, Int, String, Int) -> Unit
+    onFoodAdded: (String, Double, String, Int) -> Unit,
+    onCustomFoodSaved: (String, Double, String) -> Unit,
+    onDeleteCustomFood: (CustomFoodEntry) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedFood by remember { mutableStateOf<FoodItem?>(null) }
+    var selectedCustomFood by remember { mutableStateOf<CustomFoodEntry?>(null) }
     var quantity by remember { mutableStateOf(1) }
     var showCustomFoodForm by remember { mutableStateOf(false) }
+    var customFoodToDelete by remember { mutableStateOf<CustomFoodEntry?>(null) }
 
     val filteredFoods = indianFoodDatabase.filter {
+        it.name.contains(searchQuery, ignoreCase = true)
+    }
+    val filteredCustomFoods = customFoods.filter {
         it.name.contains(searchQuery, ignoreCase = true)
     }
 
@@ -840,10 +870,33 @@ fun AddFoodScreen(
         CustomFoodScreen(
             onBack = { showCustomFoodForm = false },
             onFoodAdded = { name, protein, unit, qty ->
+                onCustomFoodSaved(name, protein, unit)
                 onFoodAdded(name, protein, unit, qty)
             }
         )
         return
+    }
+
+    // Permanent delete confirmation for custom foods
+    if (customFoodToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { customFoodToDelete = null },
+            title = { Text("Remove from your foods?") },
+            text = { Text("This will permanently delete \"${customFoodToDelete!!.name}\" from your custom food list.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDeleteCustomFood(customFoodToDelete!!)
+                    customFoodToDelete = null
+                }) {
+                    Text("Delete", color = Color(0xFFE63946))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { customFoodToDelete = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 
     Column(
@@ -886,7 +939,6 @@ fun AddFoodScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Custom food entry link
             Text(
                 text = "Can't find your food? Add it manually →",
                 fontSize = 13.sp,
@@ -899,6 +951,7 @@ fun AddFoodScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // Selected built-in food quantity card
             if (selectedFood != null) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -906,14 +959,9 @@ fun AddFoodScreen(
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF2D6A4F))
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        Text(selectedFood!!.name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         Text(
-                            selectedFood!!.name,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            "Protein per ${selectedFood!!.unit}: ${selectedFood!!.proteinPerPiece}g",
+                            "Protein per ${selectedFood!!.unit}: ${formatProtein(selectedFood!!.proteinPerPiece)}g",
                             color = Color(0xFFB7E4C7),
                             fontSize = 12.sp
                         )
@@ -927,30 +975,20 @@ fun AddFoodScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Button(
                                     onClick = { if (quantity > 1) quantity-- },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(0xFF1B4332)
-                                    ),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B4332)),
                                     contentPadding = PaddingValues(horizontal = 12.dp)
                                 ) { Text("-") }
-                                Text(
-                                    "$quantity",
-                                    color = Color.White,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                )
+                                Text("$quantity", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp))
                                 Button(
                                     onClick = { quantity++ },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(0xFF1B4332)
-                                    ),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B4332)),
                                     contentPadding = PaddingValues(horizontal = 12.dp)
                                 ) { Text("+") }
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "Total Protein: ${selectedFood!!.proteinPerPiece * quantity}g",
+                            "Total Protein: ${formatProtein(selectedFood!!.proteinPerPiece * quantity)}g",
                             color = Color(0xFF95D5B2),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
@@ -958,23 +996,69 @@ fun AddFoodScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         Button(
                             onClick = {
-                                onFoodAdded(
-                                    selectedFood!!.name,
-                                    selectedFood!!.proteinPerPiece,
-                                    selectedFood!!.unit,
-                                    quantity
-                                )
+                                onFoodAdded(selectedFood!!.name, selectedFood!!.proteinPerPiece, selectedFood!!.unit, quantity)
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF95D5B2)
-                            )
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF95D5B2))
                         ) {
-                            Text(
-                                "Add to my list ✓",
-                                color = Color(0xFF1B4332),
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text("Add to my list ✓", color = Color(0xFF1B4332), fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            // Selected custom food quantity card
+            if (selectedCustomFood != null) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF2D6A4F))
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(selectedCustomFood!!.name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(
+                            "Protein per ${selectedCustomFood!!.unit}: ${formatProtein(selectedCustomFood!!.proteinPerUnit)}g",
+                            color = Color(0xFFB7E4C7),
+                            fontSize = 12.sp
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("How many ${selectedCustomFood!!.unit}s?", color = Color.White)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Button(
+                                    onClick = { if (quantity > 1) quantity-- },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B4332)),
+                                    contentPadding = PaddingValues(horizontal = 12.dp)
+                                ) { Text("-") }
+                                Text("$quantity", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp))
+                                Button(
+                                    onClick = { quantity++ },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B4332)),
+                                    contentPadding = PaddingValues(horizontal = 12.dp)
+                                ) { Text("+") }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Total Protein: ${formatProtein(selectedCustomFood!!.proteinPerUnit * quantity)}g",
+                            color = Color(0xFF95D5B2),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                onFoodAdded(selectedCustomFood!!.name, selectedCustomFood!!.proteinPerUnit, selectedCustomFood!!.unit, quantity)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF95D5B2))
+                        ) {
+                            Text("Add to my list ✓", color = Color(0xFF1B4332), fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -982,18 +1066,72 @@ fun AddFoodScreen(
             }
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Custom foods section (user's own added foods)
+                if (filteredCustomFoods.isNotEmpty()) {
+                    items(filteredCustomFoods) { food ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    selectedCustomFood = food
+                                    selectedFood = null
+                                    quantity = 1
+                                },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (selectedCustomFood == food) Color(0xFFD8F3DC) else Color.White
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(food.name, fontWeight = FontWeight.Medium, fontSize = 15.sp)
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            "Custom",
+                                            fontSize = 10.sp,
+                                            color = Color(0xFF2D6A4F),
+                                            modifier = Modifier
+                                                .background(Color(0xFFD8F3DC), RoundedCornerShape(6.dp))
+                                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                                        )
+                                    }
+                                    Text("per ${food.unit}", fontSize = 12.sp, color = Color(0xFFAAAAAA))
+                                }
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text("${formatProtein(food.proteinPerUnit)}g", color = Color(0xFF2D6A4F), fontWeight = FontWeight.Bold)
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Delete permanently",
+                                        tint = Color(0xFFE63946),
+                                        modifier = Modifier
+                                            .size(18.dp)
+                                            .clickable { customFoodToDelete = food }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Built-in foods section
                 items(filteredFoods) { food ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 selectedFood = food
+                                selectedCustomFood = null
                                 quantity = 1
                             },
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (selectedFood == food)
-                                Color(0xFFD8F3DC) else Color.White
+                            containerColor = if (selectedFood == food) Color(0xFFD8F3DC) else Color.White
                         )
                     ) {
                         Row(
@@ -1005,11 +1143,7 @@ fun AddFoodScreen(
                                 Text(food.name, fontWeight = FontWeight.Medium, fontSize = 15.sp)
                                 Text("per ${food.unit}", fontSize = 12.sp, color = Color(0xFFAAAAAA))
                             }
-                            Text(
-                                "${food.proteinPerPiece}g",
-                                color = Color(0xFF2D6A4F),
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text("${formatProtein(food.proteinPerPiece)}g", color = Color(0xFF2D6A4F), fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -1024,7 +1158,7 @@ fun AddFoodScreen(
 @Composable
 fun CustomFoodScreen(
     onBack: () -> Unit,
-    onFoodAdded: (String, Int, String, Int) -> Unit
+    onFoodAdded: (String, Double, String, Int) -> Unit
 ) {
     var foodName by remember { mutableStateOf("") }
     var selectedUnit by remember { mutableStateOf("piece") }
@@ -1034,7 +1168,7 @@ fun CustomFoodScreen(
 
     val unitOptions = listOf("piece", "cup", "tbsp", "plate", "100g", "glass", "handful", "scoop", "slice", "serving")
 
-    val proteinInt = proteinPerUnit.toIntOrNull() ?: 0
+    val proteinInt = proteinPerUnit.toDoubleOrNull() ?: 0.0
     val totalProtein = proteinInt * quantity
     val canAdd = foodName.isNotBlank() && proteinPerUnit.isNotBlank()
 
@@ -1184,7 +1318,7 @@ fun CustomFoodScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "Total Protein: ${totalProtein}g",
+                        "Total Protein: ${formatProtein(totalProtein)}g",
                         color = Color(0xFF95D5B2),
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
